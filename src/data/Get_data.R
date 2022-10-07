@@ -50,12 +50,18 @@ tag_vect = c(1271063, 1271064, 1271067, 1271068, 1271069, 1271073, 1271075, 1271
 # Get animal metadata
 animals <- get_animals(connection = my_con, tag_serial_number = tag_vect)
 
+# Get tag data
+tags <- get_tags(connection = my_con, tag_serial_number = tag_vect)
+
 # Get detection data
-df <- get_detections(connection = my_con, tag_id = unlist(str_split(animals$acoustic_tag_id, ",")))
+df <- get_detections(connection = my_con, tag_id = tags$acoustic_tag_id)
+
+
 
 # Save data
 write_csv(df, "data/raw/df_raw.csv")
 write_csv(animals, "data/raw/animals_raw.csv")
+write_csv(tags, "data/raw/tags.csv")
 
 #### Mapping data ####
 # Shape files originate from MarineRegions.org and EMODnet.
