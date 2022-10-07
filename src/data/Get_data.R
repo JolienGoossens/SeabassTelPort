@@ -33,20 +33,29 @@ mkdirs("reports")
 mkdirs("reports/figures")
 
 #### Get detection data #####
-# Needs to be changed
+# Set up connection
 my_con <- connect_to_etn(Sys.getenv("username"),
                          Sys.getenv("password"))
 
+# Define tag serial numbers
+tag_vect = c(1271063, 1271064, 1271067, 1271068, 1271069, 1271073, 1271075, 1271077,
+             1271096, 1292640, 1292641, 1292642, 1292643, 1292644, 1292647, 1292648,
+             1292649, 1292650, 1292651, 1292653, 1292654, 1292655, 1292656, 1292657,
+             1292658, 1292659, 1292660, 1292661, 1292662, 1292663, 1292664, 1292665,
+             1292666, 1292667, 1292668, 1292669, 1292670, 1292671, 1292672, 1293271,
+             1293272, 1293273, 1293274, 1293275, 1293276, 1293277, 1293278, 1293279,
+             1293280, 1350779, 1350780, 1350782, 1350783, 1350784, 1350785, 1350786,
+             1350787, 1350788, 1400185, 1400186, 1400187, 1400192, 1400193)
 
+# Get animal metadata
+animals <- get_animals(connection = my_con, tag_serial_number = tag_vect)
 
-df <- get_detections(connection = my_con, animal_project = "PhD_Goossens")
-animals <- get_animals(connection = my_con, scientific_name = "Dicentrarchus labrax")
-project_list <- c("bpns","pc4c","testvr2ar","thornton", "ws1", "ws2", "ws3", "lifewatch","JJ_Belwind","rt2020_zeeschelde")
-deploy <- get_deployments(my_con, open_only = F, network_project_code = project_list)
+# Get detection data
+df <- get_detections(connection = my_con, tag_id = unlist(str_split(animals$acoustic_tag_id, ",")))
 
 # Save data
-write.csv(df, "data/raw/df_raw.csv", row.names = F)
-write.csv(animals, "data/raw/animals_raw.csv", row.names = F)
+write_csv(df, "data/raw/df_raw.csv")
+write_csv(animals, "data/raw/animals_raw.csv")
 
 #### Mapping data ####
 # Shape files originate from MarineRegions.org and EMODnet.
