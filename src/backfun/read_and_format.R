@@ -28,3 +28,8 @@ cols <- c("Zeebrugge_port" = "#ffc05f",
           "Zeebrugge_out" = "#5f2f47",
           "Zeebrugge_inner" = "#c75133",
           "Other" = "#79b5ad")
+
+col_tagging = c(
+  "inner" = "#c75133",
+  "outer" = "#5f2f47"
+)
