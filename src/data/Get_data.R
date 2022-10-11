@@ -1,8 +1,8 @@
-#############################
-# Get data and make folders #
-#############################
+################
+# Get ETN data #
+################
 
-# Jolien Goosens - Marine Biology Research Group, Ghent University (Marbiol)
+# Jolien Goossens - Marine Biology Research Group, Ghent University (Marbiol) / Flanders Marine Institute (VLIZ)
 # R version 3.6.2
 
 #### Load packages ####
@@ -61,7 +61,7 @@ df <- get_detections(connection = my_con, tag_id = tags$acoustic_tag_id)
 # Save data
 write_csv(df, "data/raw/df_raw.csv")
 write_csv(animals, "data/raw/animals_raw.csv")
-write_csv(tags, "data/raw/tags.csv")
+write_csv(tags, "data/raw/tags_raw.csv")
 
 #### Mapping data ####
 # Shape files originate from MarineRegions.org and EMODnet.
