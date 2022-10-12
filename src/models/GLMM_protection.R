@@ -32,7 +32,7 @@ df_pres = deploy_zeeb %>%
 
 #### Create protection scenarios ####
 df_scenarios = tibble(
-  scenario = c(1:9),
+  scenario = c(1:7),
   scenario_name = c(
     "Maritime security measures",
     "Current regulation",
@@ -40,13 +40,11 @@ df_scenarios = tibble(
     "Current regulation without seasonal closure rivers",
     "Current regulation without spatial closure sluice",
     "Current regulation without spatial closure sluice, without fishing at night",
-    "Current regulation, without fishing at night",
-    "Maritime security measures with spatial closure sluice",
-    "Maritime security measures with spatial closure sluice, without fishing at night"),
-  prot_EU = c(         FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
-  prot_ANB_janjune = c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE),
-  prot_ANB_vandamme = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE),
-  prot_night = c(     FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE)
+    "Current regulation, without fishing at night"),
+  prot_EU = c(         FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE),
+  prot_ANB_janjune = c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE),
+  prot_ANB_vandamme = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE),
+  prot_night = c(     FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE)
 )
 
 
@@ -195,6 +193,8 @@ df_scenarios_output_model = lapply(unique(df_scenarios$scenario), function(scena
 df_scenarios_output_modeldf = plyr::ldply(df_scenarios_output_model)
 # All models have M1 as best model
 
+write_csv(df_scenarios_output_modeldf, "data/processed/df_scenarios_output_modeldf.csv")
+
 #### Predict protection (including epistemic locations) ####
 df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id) {
   df_scenario = df_scenarios %>% filter(scenario == scenario_id)
@@ -287,12 +287,12 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
     geom_point(shape = 21, position=position_jitterdodge()) + 
     scale_fill_manual(values = col_tagging) +
     scale_y_continuous(limits = c(0,1)) +
-    labs(x = "Month", y = "Predicted protection") +
+    labs(x = "Month", y = expression(pi)) +
     ggtitle(df_scenario$scenario_name)
   
   ggsave(filename = paste0("reports/figures/Fig6_protmodel_scenario", scenario_id, ".jpg"), 
          plot = plot_scenario,   
-         scale = 1, dpi = 600, width = 15, height = 10, units = "cm")
+         scale = 1, dpi = 600, width = 18, height = 11, units = "cm")
   
   pred_output = df_protmodel %>% group_by(fgroup, fid) %>% 
     summarise(pred = mean(pred)) %>% 
@@ -313,6 +313,4 @@ df_scenarios_outputdf = plyr::ldply(df_scenarios_output)
 
 #### Save results df ####
 write_csv(df_scenarios_outputdf, "data/processed/model_output.csv")
-
-
 
