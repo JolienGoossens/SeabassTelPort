@@ -290,7 +290,7 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
     labs(x = "Month", y = expression(pi)) +
     ggtitle(df_scenario$scenario_name)
   
-  ggsave(filename = paste0("reports/figures/Fig6_protmodel_scenario", scenario_id, ".jpg"), 
+  ggsave(filename = paste0("reports/figures/Fig7_protmodel_scenario", scenario_id, ".jpg"), 
          plot = plot_scenario,   
          scale = 1, dpi = 600, width = 18, height = 11, units = "cm")
   
