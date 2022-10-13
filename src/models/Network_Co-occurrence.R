@@ -65,10 +65,7 @@ list_result = lapply(1:length(combn(unique(tag_vect), m=2)[1,]), function(combo)
       hours_at_large = NA
     )
   } else {
-    
-    
-    
-    
+
     total_hours = length(unique(df_combo$date_hour))
     
     cooc_hours = df_combo %>% 

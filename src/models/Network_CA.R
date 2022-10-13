@@ -72,6 +72,6 @@ plot_ca = ggplot() +
 
 
 #### Save plot #### 
-ggsave(filename = "reports/figures/Fig4_CA.jpg", 
+ggsave(filename = "reports/figures/Fig5_CA.jpg", 
        plot = plot_ca,   
        scale = 1, dpi = 600, width = 8, height = 14, units = "cm")

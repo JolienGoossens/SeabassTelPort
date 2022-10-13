@@ -173,7 +173,7 @@ network_map_out = base_map +
 network_map_combi = network_map_out /network_map
 
 #### Save ####
-ggsave(filename = "reports/figures/Fig5_Networkmap.jpg", 
+ggsave(filename = "reports/figures/Fig6_Networkmap.jpg", 
        plot = network_map_combi,   
        scale = 1, dpi = 600, width = 13, height = 16, units = "cm")
 

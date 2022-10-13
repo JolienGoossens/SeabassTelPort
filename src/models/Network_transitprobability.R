@@ -114,6 +114,6 @@ network_matrix = sharkov_result_df %>%
   labs(x="", y ="") +
   facet_grid(cols = vars(check), scales = "free", space = "free")
 
-ggsave(filename = "reports/figures/Fig5_Transitprobmatrix.jpg", 
+ggsave(filename = "reports/figures/Fig6_Transitprobmatrix.jpg", 
        plot = network_matrix,   
        scale = 1, dpi = 600, width = 17, height = 15, units = "cm")
