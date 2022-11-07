@@ -274,8 +274,7 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
   M1 = glmer(cbind(prot_bin, n - prot_bin) ~  fgroup+ (1|fgroup:fid) + (1|fmonth), 
              family =binomial(link = "logit"), data = df_protmodel)  
   
-  p_value = summary(M1)$coefficients[2,4]
- 
+  
   df_protmodel = df_protmodel %>% 
     mutate(pred = predict(M1, newdata = df_protmodel, type = "response"))
   
@@ -297,15 +296,20 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
   pred_output = df_protmodel %>% group_by(fgroup, fid) %>% 
     summarise(pred = mean(pred)) %>% 
     group_by(fgroup) %>% 
-    summarise(med = round(median(pred), 3), 
-              q5 = round(quantile(pred, 0.025), 3),
-              q95 = round(quantile(pred, 0.975), 3)) %>% 
-    mutate(pred = paste0(med, " [", q5, "-", q95, "]")) %>% 
+    summarise(med = round(median(pred), 2), 
+              min_pred = round(min(pred), 2),
+              max_pred = round(max(pred), 2)) %>% 
+    mutate(pred = paste0(med, " [", min_pred, "-", max_pred, "]")) %>% 
     select(fgroup, pred) %>% 
     spread(fgroup, pred)
   
   df_scenario = cbind(df_scenario, pred_output)
-  df_scenario$p_value = p_value
+  df_scenario$fixed = paste0(round(summary(M1)$coefficients[2,1], 2), " (", 
+                                round(summary(M1)$coefficients[2,2], 2), ")")
+  df_scenario$random_id = round(as.data.frame(VarCorr(M1))$sdcor[1], 2)
+  df_scenario$random_month = round(as.data.frame(VarCorr(M1))$sdcor[2], 2)
+  df_scenario$p_value = summary(M1)$coefficients[2,4]
+  
   return(df_scenario)
 })
 
