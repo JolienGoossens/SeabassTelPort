@@ -7,7 +7,7 @@ flag_plot = F # set to TRUE to see what's happening
 
 
 #### Colour settings ####
-colland =  "#c8ccc0" #"#e2d7ca"# "honeydew"
+colland = "gray90"  #"#c8ccc0" #"#e2d7ca"# "honeydew"
 colsea = "white" # "#00949e"
 
 #### Read data ####

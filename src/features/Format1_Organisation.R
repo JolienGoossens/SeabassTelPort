@@ -13,7 +13,7 @@ library(lubridate)
 #### Get data ####
 df <- read_csv("data/raw/df_raw.csv")
 an <- read_csv("data/raw/animals_raw.csv")
-tags <- read_csv("data/raw/tags_raw.csv")
+tags <- read_csv("data/raw/tags.csv")
 
 #### Clean columns ####
 df <- df %>% 
@@ -155,7 +155,7 @@ an <- tags %>%
     step3 = paste0(step3_duration, " ", step3_power, " (", step3_min_delay, "-", step3_max_delay, ")")) %>% 
   mutate(tag_serial_number = as.character(tag_serial_number)) %>% 
   arrange(tag_serial_number) %>% 
-  group_by(tag_serial_number, tag_type, battery_estimated_life2, step1, step2, step3) %>% 
+  group_by(tag_serial_number, battery_estimated_life2, step1, step2, step3) %>% 
   summarise(
     acoustic_tag_id = paste(acoustic_tag_id, collapse = ','),
     sensor_type = paste(sensor_type, collapse = ',')) %>% 
@@ -164,8 +164,21 @@ an <- tags %>%
   right_join(an, by = "tag_serial_number")
 
 an <- an %>% 
-  mutate(battery_estimated_end_date = date(release_date_time) + days(battery_estimated_life2))
+  mutate(battery_estimated_end_date_temp = date(release_date_time) + days(battery_estimated_life2))
 
+an = df %>%
+  mutate(tag_serial_number = as.character(tag_serial_number)) %>% 
+  group_by(tag_serial_number) %>% summarise(max_det = max(date_time)) %>% 
+  right_join(an)
+
+an = an %>% 
+  mutate(battery_estimated_end_date = if_else(
+    year(max_det) == 2022 & max_det > battery_estimated_end_date_temp,
+    date(max_det),
+    battery_estimated_end_date_temp)) %>% 
+  mutate(battery_estimated_end_date = if_else(
+    is.na(battery_estimated_end_date), battery_estimated_end_date_temp, battery_estimated_end_date)) %>% 
+  select(-max_det, - battery_estimated_end_date_temp)
 
 #### Formatting of ETN extracted data: detection data ####
 # Fix classes
@@ -242,6 +255,8 @@ df <- df %>%
   mutate(dn = ifelse(sunrise <= date_time & date_time < sunset, "Day", "Night")) %>% 
   select(-sunrise, -sunset)
 
+# Filter for unlikely detection
+df = df %>% filter(acoustic_project_code != "MOBEIA")
 
 
 #### Save data ####

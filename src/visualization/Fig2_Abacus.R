@@ -145,6 +145,7 @@ size_release = 3
 abacus_plot = ggplot() +
   theme_bw() +
   theme(panel.background = element_rect(fill = 'gray98'),
+        plot.margin = margin(0.1, 0.5, 0.1, .01, "cm"),
         axis.ticks.y=element_blank(),
         axis.text.x=element_text(hjust=0, size = 12),
         axis.title = element_blank(),
@@ -183,7 +184,7 @@ abacus_plot = ggplot() +
   #           hjust = 0) +
   theme(panel.grid.minor = element_blank()) +
   scale_x_datetime(limits = c(parse_date_time("2018-07-01", "ymd"),
-                              parse_date_time("2022-03-01", "ymd")),expand = c(0.05,0),
+                              parse_date_time("2022-07-31", "ymd")),expand = c(0.05,0),
                    date_breaks = "3 month", date_labels = "%b", position = "top",
                    sec.axis = sec_axis(~.)) +
   facet_grid(station_group_release~., scales = "free_y", space = "free")

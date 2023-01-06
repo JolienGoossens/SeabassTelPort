@@ -91,10 +91,10 @@ res_month_stat <- res_month_ind_stat %>%
   summarise(
     residency_day_mean = mean(residency_day),
     residency_hr_mean= mean(residency_hour),
-    residency_day_0.05 = quantile(residency_day, 0.05),
-    residency_hour_0.05 = quantile(residency_hour, 0.05),
-    residency_day_0.95 = quantile(residency_day, 0.95),
-    residency_hour_0.95 = quantile(residency_hour, 0.95))
+    residency_day_0.05 = quantile(residency_day, 0.025),
+    residency_hour_0.05 = quantile(residency_hour, 0.025),
+    residency_day_0.95 = quantile(residency_day, 0.975),
+    residency_hour_0.95 = quantile(residency_hour, 0.975))
 
 
 #### Make plot ####
@@ -117,7 +117,7 @@ res_plot = res_month_stat %>%
   scale_fill_manual(values = cols) +
   facet_grid(~station_group) +
   labs(x ="Month", y= "Daily / hourly residency")
-
+res_plot
 
 #### Save plot ####
 ggsave(filename = "reports/figures/Fig3_RI.jpg", 
