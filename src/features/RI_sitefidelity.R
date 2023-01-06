@@ -9,12 +9,32 @@
 #### Run read_and_format.R ####
 source("src/backfun/read_and_format.R")
 
+# Number of detections
+df %>% 
+  filter(!acoustic_project_code %in% c("release", "recapture")) %>%
+  nrow()
+df %>% 
+  filter(!acoustic_project_code %in% c("release", "recapture")) %>%
+  filter(station_group != "Other") %>% 
+  nrow()
+
+# Number of animals
+df %>% 
+  filter(!acoustic_project_code %in% c("release", "recapture")) %>%
+  filter(station_group != "Other") %>% 
+  distinct(tag_serial_number) %>% 
+  nrow()
+
+df %>% 
+  filter(!acoustic_project_code %in% c("release", "recapture")) %>%
+  distinct(tag_serial_number) %>% 
+  nrow()
+
 #### Filter for port data ####
 df <- df %>% filter(station_group != "Other") %>% filter(acoustic_project_code == "bpns")
 df <- df %>% mutate(station_group2 = ifelse(station_group == "Zeebrugge_inner", "Inner", "Outer"))
 
 unique(df$station_name) # No detections at bpns-visart
-nrow(df) # 364144 detections
 
 #### Get minimum temperature ####
 df %>% filter(sensor_type == "T") %>% summarise(min_T= min(sensor_value_calc))

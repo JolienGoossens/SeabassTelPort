@@ -27,6 +27,14 @@ df %>%
             n_hour = length(unique(date_hour)),
             n = n())
 # Only use Vandamme and Boudewijn
+tag_vect_final = df %>% 
+  filter(tag_serial_number %in% tag_vect) %>% 
+  filter(station_name  == "bpns-boudewijn") %>% 
+  distinct(tag_serial_number) %>% 
+  pull()
+
+tag_vect = tag_vect_final
+
 
 #### Presence: make subset ####
 # Presence
@@ -262,7 +270,7 @@ drop1(M1, test = "Chisq")
 anova(M1, M2)
 
 # Final model
-model_dn = M1
+model_dn = M2
 
 # Plot residuals
 p_acc_pearson = dfdn %>% 
@@ -281,7 +289,6 @@ p_acc_pearson = dfdn %>%
   labs(x = "Fitted values", 
        y = "Pearson residuals (Acceleration)")
 
-# Potential issue with larger values: just to check: remove animals with outliers
 
 
 #### Combine all plots ####
@@ -289,7 +296,7 @@ p_box = p_pres_box + p_depth_box + p_acc_box + plot_layout(nrow = 3, heights = c
 p_pearson = p_pres_pearson / p_depth_pearson / p_acc_pearson
 
 #### Save plots ####
-ggsave(filename = "reports/figures/Fig_Vandamme_box.jpg", 
+ggsave(filename = "reports/figures/Fig6_Vandamme_box.jpg", 
        plot = p_box,   
        scale = 1, dpi = 600, width = 10, height = 20, units = "cm")
 ggsave(filename = "reports/figures/Fig_Annex_Vandamme_pearson.jpg", 

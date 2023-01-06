@@ -51,6 +51,7 @@ coor_an = an %>% select(animal_id, station_group) %>% right_join(coor_an)
 coor_stat = as.data.frame(cari$row$coord[,1:2])
 colnames(coor_stat) = c("dim1", "dim2")
 coor_stat$station_name = row.names(coor_stat)
+coor_stat$station_name = str_replace_all(coor_stat$station_name, "[.]", "-")
 coor_stat = deploy_zeeb %>% select(station_name, label_name, station_group) %>% right_join(coor_stat)
 
 plot_ca = ggplot() +
