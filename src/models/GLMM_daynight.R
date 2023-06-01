@@ -69,7 +69,7 @@ p_pres_box = dfdn %>%
   theme_classic() +
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank()) +
-  geom_boxplot(aes(fill = dn), colour = "#c75133", lwd = 0.8) +
+  geom_boxplot(aes(fill = dn), outlier.shape = NA, colour = "#c75133", lwd = 0.8) +
   geom_jitter(aes(fill = dn), colour = "#c75133", shape = 21) +
   scale_fill_manual(values = c("#94d7f1", "#1d2855")) +
   scale_y_continuous(expand = c(0.01,0)) +
@@ -156,7 +156,7 @@ p_depth_box = dfdn %>%
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank(),
         strip.text.x = element_blank()) +
-  geom_boxplot(aes(fill = dn), colour = "#c75133", lwd = 0.8) +
+  geom_boxplot(aes(fill = dn), outlier.shape = NA, colour = "#c75133", lwd = 0.8) +
   geom_jitter(aes(fill = dn), colour = "#c75133", shape = 21) +
   scale_fill_manual(values = c("#94d7f1", "#1d2855")) +
   scale_y_continuous(expand = c(0.01,0), limits = c(0, 4.5)) +
@@ -237,7 +237,7 @@ p_acc_box = dfdn %>%
   ggplot(aes(dn, acc_mean)) +
   theme_classic() +
   theme(strip.text.x = element_blank()) +
-  geom_boxplot(aes(fill = dn), colour = "#c75133", lwd = 0.8) +
+  geom_boxplot(aes(fill = dn), outlier.shape = NA, colour = "#c75133", lwd = 0.8) +
   geom_jitter(aes(fill = dn), colour = "#c75133", shape = 21) +
   scale_fill_manual(values = c("#94d7f1", "#1d2855")) +
   scale_y_continuous(expand = c(0.01,0), limits = c(0, 1.9)) +

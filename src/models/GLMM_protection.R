@@ -29,6 +29,15 @@ df_pres = deploy_zeeb %>%
   select(station_name, station_group) %>% 
   right_join(df_pres)
 
+# Filter for dates with detections or likely locations
+list_df_pres = lapply(unique(df_pres$animal_id), function(animal_id_i){
+  df_pot_i = df_pot %>% filter(animal_id == animal_id_i)
+  df_pres_i = df_pres %>% 
+    filter(animal_id == animal_id_i) %>% 
+    filter(date_hour %in% df_pot_i$date_hour)
+  return(df_pres_i)
+})
+df_pres = plyr::ldply(list_df_pres) %>% as_tibble()
 
 #### Create protection scenarios ####
 df_scenarios = tibble(
@@ -282,7 +291,7 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
     ggplot(aes(x = fmonth, y = pred, fill = fgroup)) +
     theme_bw() +
     theme(legend.position = "none") +
-    geom_boxplot(alpha= 0.8) +
+    geom_boxplot(alpha= 0.8, outlier.shape = NA) +
     geom_point(shape = 21, position=position_jitterdodge()) + 
     scale_fill_manual(values = col_tagging) +
     scale_y_continuous(limits = c(0,1)) +
