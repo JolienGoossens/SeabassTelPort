@@ -136,7 +136,8 @@ df_result_sum = df_result  %>%
 
 #### Plot co-occurrence matrix? ####
 df_result %>% 
-  ggplot(aes(tagA,tagB,fill = releaseB, colour = releaseA, alpha = SRI)) +
+  # ggplot(aes(tagA,tagB,fill = releaseB, colour = releaseA, alpha = SRI)) +
+  ggplot(aes(tagA,tagB,fill = stratB, colour = stratA, alpha = SRI)) +
   geom_tile() +
   geom_text(aes(label = round(SRI,2)), colour = "black") +
   scale_alpha_continuous(range = c(0.7, 0.8), na.value = 0)
