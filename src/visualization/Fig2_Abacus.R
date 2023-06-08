@@ -9,17 +9,30 @@
 #### Run read_and_format.R ####
 source("src/backfun/read_and_format.R")
 Sys.setlocale("LC_ALL", "English")
+animal_id_i = 3520
 
 #### Make data frame with all possible dates for each fish ####
 list_pot <- lapply(unique(an$animal_id), function(animal_id_i) {
   df_temp <- df %>% filter(animal_id == animal_id_i)
   an_temp <- an %>% filter(animal_id == animal_id_i)
   
+  # # Get potential dates
+  # if (is.na(an_temp$recapture_date_time) | 
+  #     an_temp$recapture_date_time > an_temp$battery_estimated_end_date) {
+  #   pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
+  #                        to = date(an_temp$battery_estimated_end_date), by = "day")
+  # } else {
+  #   pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
+  #                        to = date(an_temp$recapture_date_time), by = "day")
+  # }
+  
   # Get potential dates
   if (is.na(an_temp$recapture_date_time) | 
-      an_temp$recapture_date_time > an_temp$battery_estimated_end_date) {
+      an_temp$recapture_date_time > an_temp$battery_estimated_end_date |
+      (!is.na(an_temp$recapture_date_time) & nrow(df_temp) == 2)) {
+    df_temp = df_temp %>% filter(acoustic_project_code != "recapture")
     pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
-                         to = date(an_temp$battery_estimated_end_date), by = "day")
+                         to = date(max(df_temp$date)), by = "day")
   } else {
     pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
                          to = date(an_temp$recapture_date_time), by = "day")
@@ -194,4 +207,8 @@ abacus_plot
 #### Save plot ####
 ggsave(filename = "reports/figures/Fig2_Abacus.jpg", 
        plot = abacus_plot,   
-       scale = 1, dpi = 600, width = 25, height = 15, units = "cm")
+       scale = 1.6, dpi = 600, width = 17, height = 10, units = "cm")
+
+# ggsave(filename = "reports/figures/Fig2_Abacus.jpg", 
+#        plot = abacus_plot,   
+#        scale = 1, dpi = 600, width = 25, height = 15, units = "cm")

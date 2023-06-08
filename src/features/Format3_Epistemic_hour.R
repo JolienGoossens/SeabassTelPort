@@ -15,11 +15,23 @@ list_pot <- lapply(unique(an$animal_id), function(animal_id_i) {
   df_temp <- df %>% filter(animal_id == animal_id_i)
   an_temp <- an %>% filter(animal_id == animal_id_i)
   
+  # # Get potential dates
+  # if (is.na(an_temp$recapture_date_time) | 
+  #     an_temp$recapture_date_time > an_temp$battery_estimated_end_date) {
+  #   pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
+  #                        to = date(an_temp$battery_estimated_end_date), by = "day")
+  # } else {
+  #   pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
+  #                        to = date(an_temp$recapture_date_time), by = "day")
+  # }
+  
+  
   # Get potential dates
   if (is.na(an_temp$recapture_date_time) | 
       an_temp$recapture_date_time > an_temp$battery_estimated_end_date) {
+    df_temp = df_temp %>% filter(acoustic_project_code != "recapture")
     pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
-                         to = date(an_temp$battery_estimated_end_date), by = "day")
+                         to = date(max(df_temp$date)), by = "day")
   } else {
     pot_dates = seq.Date(from = date(an_temp$capture_date_time), 
                          to = date(an_temp$recapture_date_time), by = "day")

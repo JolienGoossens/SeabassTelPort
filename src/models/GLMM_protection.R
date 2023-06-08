@@ -29,6 +29,15 @@ df_pres = deploy_zeeb %>%
   select(station_name, station_group) %>% 
   right_join(df_pres)
 
+# Filter for dates with detections or likely locations
+list_df_pres = lapply(unique(df_pres$animal_id), function(animal_id_i){
+  df_pot_i = df_pot %>% filter(animal_id == animal_id_i)
+  df_pres_i = df_pres %>% 
+    filter(animal_id == animal_id_i) %>% 
+    filter(date_hour %in% df_pot_i$date_hour)
+  return(df_pres_i)
+})
+df_pres = plyr::ldply(list_df_pres) %>% as_tibble()
 
 #### Create protection scenarios ####
 df_scenarios = tibble(
@@ -271,27 +280,57 @@ df_scenarios_output = lapply(unique(df_scenarios$scenario), function(scenario_id
     select(fid, fmonth,fgroup, prot_bin, n)
   
   # Model
-  M1 = glmer(cbind(prot_bin, n - prot_bin) ~  fgroup+ (1|fgroup:fid) + (1|fmonth), 
+  M1 = glmer(cbind(prot_bin, n - prot_bin) ~  fgroup + (1|fgroup:fid) + (1|fmonth), 
              family =binomial(link = "logit"), data = df_protmodel)  
-  
-  
+
   df_protmodel = df_protmodel %>% 
     mutate(pred = predict(M1, newdata = df_protmodel, type = "response"))
   
-  plot_scenario = df_protmodel %>% 
-    ggplot(aes(x = fmonth, y = pred, fill = fgroup)) +
+  df_protmodelsum = df_protmodel %>% 
+    group_by(fmonth, fgroup) %>% 
+    summarise(lower = quantile(pred, 0.025),
+              upper = quantile(pred, 0.975),
+              med = median(pred))
+  
+  # # Calculate confidence interval & prediction
+  # newdata = with(M1,
+  #                expand.grid(fmonth = unique(df_protmodel$fmonth),
+  #                            fgroup = unique(df_protmodel$fgroup)))
+  # Xmat <- model.matrix(~fgroup, newdata)
+  # fixest <- fixef(M1)
+  # fit <- as.vector(fixest %*% t(Xmat))
+  # SE <- sqrt(diag(Xmat %*% vcov(M1) %*% t(Xmat)))
+  # q <- qt(0.975, df=df.residual(M1))
+  # linkinv <- binomial()$linkinv
+  # newdata <- cbind(newdata, fit=linkinv(fit), 
+  #                  lower=linkinv(fit-q*SE),
+  #                  upper=linkinv(fit+q*SE))
+  
+  
+  plot_scenario = ggplot() +
     theme_bw() +
     theme(legend.position = "none") +
-    geom_boxplot(alpha= 0.8) +
-    geom_point(shape = 21, position=position_jitterdodge()) + 
+    # geom_boxplot(alpha= 0.8, outlier.shape = NA) +
+    geom_linerange(data = df_protmodelsum,
+                   aes(x = fmonth, ymin= lower, ymax = upper, colour = fgroup), 
+                   size = 1.8, position = position_dodge(width = 0.6), alpha = 0.75) + 
+    geom_point(data = df_protmodel,
+               aes(x = fmonth, y = pred, fill = fgroup),
+               shape = 21, position=position_jitterdodge(), alpha = 0.8) + 
+    
+    geom_point(data = df_protmodelsum,
+               aes(x = fmonth, y = med, colour = fgroup), 
+               size = 3, shape = 22, fill = "beige", position = position_dodge(width = 0.6)) +
     scale_fill_manual(values = col_tagging) +
     scale_y_continuous(limits = c(0,1)) +
+    scale_colour_manual(values = col_tagging) +
     labs(x = "Month", y = expression(pi)) +
     ggtitle(df_scenario$scenario_name)
+  plot_scenario
   
   ggsave(filename = paste0("reports/figures/Fig7_protmodel_scenario", scenario_id, ".jpg"), 
          plot = plot_scenario,   
-         scale = 1, dpi = 600, width = 18, height = 11, units = "cm")
+         scale = 1, dpi = 600, width = 17, height = 10, units = "cm")
   
   pred_output = df_protmodel %>% group_by(fgroup, fid) %>% 
     summarise(pred = mean(pred)) %>% 

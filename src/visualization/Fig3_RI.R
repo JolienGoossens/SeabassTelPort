@@ -122,4 +122,4 @@ res_plot
 #### Save plot ####
 ggsave(filename = "reports/figures/Fig3_RI.jpg", 
        plot = res_plot,   
-       scale = 1, dpi = 600, width = 16, height = 8, units = "cm")
+       scale = 1.9, dpi = 600, width = 8.5, height = 4, units = "cm")
